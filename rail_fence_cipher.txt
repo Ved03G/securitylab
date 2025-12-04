@@ -1,0 +1,17 @@
+# rail_fence.py
+def rail_fence_encrypt(text, rails):
+    if rails == 1:
+        return text
+    fence = ['' for _ in range(rails)]
+    rail = 0
+    direction = 1
+    for ch in text:
+        fence[rail] += ch
+        rail += direction
+        if rail == 0 or rail == rails - 1:
+            direction *= -1
+    return ''.join(fence)
+
+# Example
+if __name__ == "__main__":
+    print(rail_fence_encrypt("WEAREDISCOVEREDFLEEATONCE", 3))

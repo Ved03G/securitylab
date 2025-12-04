@@ -1,0 +1,37 @@
+# autokey.py
+def autokey_encrypt(plain, key):
+    key_stream = list(key) + list(plain)
+    out = []
+    for i, ch in enumerate(plain):
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            kch = key_stream[i]
+            k = ord(kch.lower()) - ord('a')
+            out.append(chr((ord(ch)-base + k) % 26 + base))
+        else:
+            out.append(ch)
+    return ''.join(out)
+
+def autokey_decrypt(cipher, key):
+    plaintext = []
+    key_stream = list(key)
+    for ch in cipher:
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            k = ord(key_stream[0].lower()) - ord('a')
+            p = (ord(ch) - base - k) % 26
+            pch = chr(p + base)
+            plaintext.append(pch)
+            key_stream.append(pch)
+            key_stream.pop(0)
+        else:
+            plaintext.append(ch)
+    return ''.join(plaintext)
+
+# Example (note: for simplicity use lowercase/plain without spaces)
+if __name__ == "__main__":
+    pt = "attack"
+    key = "queen"
+    ct = autokey_encrypt(pt, key)
+    print("CT:", ct)
+    # decryption here expects same simple handling; a robust autokey needs careful non-alpha handling.

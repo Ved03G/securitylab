@@ -1,0 +1,10 @@
+# shift_cipher.py
+def shift_cipher(plain, shift):
+    return ''.join(
+        chr((ord(ch) - base + shift) % 26 + base) if (ch.isalpha() and (base:=ord('A') if ch.isupper() else ord('a'))) else ch
+        for ch in plain
+    )
+
+# Example
+if __name__ == "__main__":
+    print(shift_cipher("Shift Me 123", 7))

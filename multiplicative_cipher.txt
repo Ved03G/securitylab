@@ -1,0 +1,39 @@
+# multiplicative_cipher.py
+from math import gcd
+
+def mul_encrypt(plain, key):
+    if gcd(key,26) != 1:
+        raise ValueError("Key must be coprime with 26.")
+    out = []
+    for ch in plain:
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            out.append(chr((key * (ord(ch)-base)) % 26 + base))
+        else:
+            out.append(ch)
+    return ''.join(out)
+
+def modinv(a, m):
+    # Extended Euclid
+    a = a % m
+    for x in range(1, m):
+        if (a * x) % m == 1:
+            return x
+    raise ValueError("No modular inverse")
+
+def mul_decrypt(cipher, key):
+    inv = modinv(key, 26)
+    out = []
+    for ch in cipher:
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            out.append(chr((inv * (ord(ch)-base)) % 26 + base))
+        else:
+            out.append(ch)
+    return ''.join(out)
+
+# Example
+if __name__ == "__main__":
+    c = mul_encrypt("hello", 5)
+    print("Encrypted:", c)
+    print("Decrypted:", mul_decrypt(c, 5))

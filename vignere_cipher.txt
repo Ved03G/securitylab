@@ -1,0 +1,31 @@
+# vigenere.py
+def vigenere_encrypt(plain, key):
+    res = []
+    ki = 0
+    for ch in plain:
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            k = ord(key[ki % len(key)].lower()) - ord('a')
+            res.append(chr((ord(ch)-base + k) % 26 + base))
+            ki += 1
+        else:
+            res.append(ch)
+    return ''.join(res)
+
+def vigenere_decrypt(cipher, key):
+    res = []
+    ki = 0
+    for ch in cipher:
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            k = ord(key[ki % len(key)].lower()) - ord('a')
+            res.append(chr((ord(ch)-base - k) % 26 + base))
+            ki += 1
+        else:
+            res.append(ch)
+    return ''.join(res)
+
+# Example
+if __name__ == "__main__":
+    print(vigenere_encrypt("HELLO WORLD", "KEY"))
+    print(vigenere_decrypt(vigenere_encrypt("HELLO WORLD", "KEY"), "KEY"))

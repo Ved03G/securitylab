@@ -1,0 +1,15 @@
+# additive_cipher.py
+def additive_encrypt(plain, key):
+    return ''.join(
+        chr((ord(c) - ord('a') + key) % 26 + ord('a')) if c.islower()
+        else chr((ord(c) - ord('A') + key) % 26 + ord('A')) if c.isupper()
+        else c for c in plain
+    )
+
+def additive_decrypt(cipher, key):
+    return additive_encrypt(cipher, -key)
+
+# Example
+if __name__ == "__main__":
+    print(additive_encrypt("hello World", 5))
+    print(additive_decrypt(additive_encrypt("hello World", 5), 5))

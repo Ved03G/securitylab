@@ -1,0 +1,53 @@
+# playfair.py
+import string
+
+def generate_key_table(key):
+    key = "".join(dict.fromkeys(key.lower().replace('j','i')))  # replace j->i
+    table = []
+    for ch in key + ''.join(c for c in string.ascii_lowercase if c != 'j'):
+        if ch not in table:
+            table.append(ch)
+    return [table[i:i+5] for i in range(0,25,5)]
+
+def find_pos(table, ch):
+    for r in range(5):
+        for c in range(5):
+            if table[r][c] == ch:
+                return r, c
+    return None
+
+def playfair_prepare(text):
+    text = text.lower().replace('j','i').replace(' ', '')
+    res = []
+    i = 0
+    while i < len(text):
+        a = text[i]
+        b = text[i+1] if i+1 < len(text) else 'x'
+        if a == b:
+            res.append(a + 'x')
+            i += 1
+        else:
+            res.append(a + b)
+            i += 2
+    if len(res[-1]) == 1:
+        res[-1] += 'x'
+    return res
+
+def playfair_encrypt(plain, key):
+    table = generate_key_table(key)
+    pairs = playfair_prepare(plain)
+    out = []
+    for a,b in pairs:
+        ra, ca = find_pos(table, a)
+        rb, cb = find_pos(table, b)
+        if ra == rb:
+            out.append(table[ra][(ca+1)%5] + table[rb][(cb+1)%5])
+        elif ca == cb:
+            out.append(table[(ra+1)%5][ca] + table[(rb+1)%5][cb])
+        else:
+            out.append(table[ra][cb] + table[rb][ca])
+    return ''.join(out)
+
+# Example
+if __name__ == "__main__":
+    print(playfair_encrypt("hide the gold", "playfairexample"))

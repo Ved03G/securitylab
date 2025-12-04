@@ -1,0 +1,21 @@
+# caesar.py
+def caesar_encrypt(plain, shift):
+    result = []
+    for ch in plain:
+        if ch.isalpha():
+            base = 'A' if ch.isupper() else 'a'
+            result.append(chr((ord(ch) - ord(base) + shift) % 26 + ord(base)))
+        else:
+            result.append(ch)
+    return ''.join(result)
+
+def caesar_decrypt(cipher, shift):
+    return caesar_encrypt(cipher, -shift)
+
+# Example
+if __name__ == "__main__":
+    plaintext = "Attack at Dawn!"
+    s = 3
+    c = caesar_encrypt(plaintext, s)
+    print("Cipher:", c)
+    print("Decrypted:", caesar_decrypt(c, s))

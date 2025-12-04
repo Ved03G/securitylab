@@ -1,0 +1,40 @@
+# affine_cipher.py
+from math import gcd
+
+def modinv(a, m):
+    a = a % m
+    for x in range(1, m):
+        if (a * x) % m == 1:
+            return x
+    raise ValueError("No modular inverse")
+
+def affine_encrypt(plain, a, b):
+    if gcd(a,26) != 1:
+        raise ValueError("a must be coprime with 26")
+    out = []
+    for ch in plain:
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            x = ord(ch) - base
+            out.append(chr((a * x + b) % 26 + base))
+        else:
+            out.append(ch)
+    return ''.join(out)
+
+def affine_decrypt(cipher, a, b):
+    a_inv = modinv(a, 26)
+    out = []
+    for ch in cipher:
+        if ch.isalpha():
+            base = ord('A') if ch.isupper() else ord('a')
+            y = ord(ch) - base
+            out.append(chr((a_inv * (y - b)) % 26 + base))
+        else:
+            out.append(ch)
+    return ''.join(out)
+
+# Example
+if __name__ == "__main__":
+    ct = affine_encrypt("Affine Example", 5, 8)
+    print("Cipher:", ct)
+    print("Decrypted:", affine_decrypt(ct, 5, 8))

@@ -1,0 +1,24 @@
+# columnar_transposition.py
+def keyed_transposition_encrypt(plain, key):
+    # remove spaces for simplicity
+    plain = plain.replace(" ", "")
+    n = len(key)
+    rows = (len(plain) + n - 1) // n
+    matrix = [['X'] * n for _ in range(rows)]
+    idx = 0
+    for r in range(rows):
+        for c in range(n):
+            if idx < len(plain):
+                matrix[r][c] = plain[idx]
+                idx += 1
+    # order columns by key letters
+    order = sorted(range(n), key=lambda i: key[i])
+    cipher = []
+    for col in order:
+        for row in range(rows):
+            cipher.append(matrix[row][col])
+    return ''.join(cipher)
+
+# Example
+if __name__ == "__main__":
+    print(keyed_transposition_encrypt("attackatdawn", "zebra"))

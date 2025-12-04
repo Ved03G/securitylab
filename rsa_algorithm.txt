@@ -1,0 +1,53 @@
+# rsa_demo.py
+import random
+from math import gcd
+
+def is_prime(n):
+    if n <= 1: return False
+    if n <= 3: return True
+    if n%2==0: return False
+    r = int(n**0.5)
+    for i in range(3, r+1, 2):
+        if n % i == 0:
+            return False
+    return True
+
+def egcd(a,b):
+    if b==0: return (1,0,a)
+    x,y,g = egcd(b, a%b)
+    return (y, x - (a//b)*y, g)
+
+def modinv(a, m):
+    x,y,g = egcd(a,m)
+    if g != 1:
+        raise Exception('No mod inverse')
+    return x % m
+
+def rsa_generate(p, q):
+    if not (is_prime(p) and is_prime(q)):
+        raise ValueError("p and q must be primes")
+    n = p*q
+    phi = (p-1)*(q-1)
+    # choose e
+    e = 3
+    while gcd(e, phi) != 1:
+        e += 2
+    d = modinv(e, phi)
+    return (e, d, n)
+
+def rsa_encrypt(m, e, n):
+    return pow(m, e, n)
+
+def rsa_decrypt(c, d, n):
+    return pow(c, d, n)
+
+# Example with small primes
+if __name__ == "__main__":
+    p, q = 61, 53
+    e, d, n = rsa_generate(p, q)
+    print("Public key (e,n):", e, n)
+    print("Private key d:", d)
+    message = 65  # numeric message (simple demo)
+    c = rsa_encrypt(message, e, n)
+    print("Cipher:", c)
+    print("Decrypted:", rsa_decrypt(c, d, n))

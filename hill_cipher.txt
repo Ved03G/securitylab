@@ -1,0 +1,40 @@
+# hill_cipher.py
+import itertools
+
+def mat_mult_2x2(a, b):
+    return [
+        [(a[0][0]*b[0][0] + a[0][1]*b[1][0]) % 26, (a[0][0]*b[0][1] + a[0][1]*b[1][1]) % 26],
+        [(a[1][0]*b[0][0] + a[1][1]*b[1][0]) % 26, (a[1][0]*b[0][1] + a[1][1]*b[1][1]) % 26]
+    ]
+
+def det_inv_2x2(mat):
+    det = (mat[0][0]*mat[1][1] - mat[0][1]*mat[1][0]) % 26
+    # find modular inverse
+    for i in range(1,26):
+        if (det * i) % 26 == 1:
+            inv = i
+            break
+    else:
+        raise ValueError("Matrix not invertible mod 26")
+    # adjugate times inv
+    adj = [[mat[1][1]*inv % 26, (-mat[0][1]*inv) % 26],
+           [(-mat[1][0]*inv) % 26, (mat[0][0]*inv) % 26]]
+    return adj
+
+def hill_encrypt(plain, key_matrix):
+    # pad if odd length
+    if len(plain) % 2 != 0:
+        plain += 'x'
+    out = []
+    for i in range(0, len(plain), 2):
+        v = [ord(plain[i]) - ord('a'), ord(plain[i+1]) - ord('a')]
+        c0 = (key_matrix[0][0]*v[0] + key_matrix[0][1]*v[1]) % 26
+        c1 = (key_matrix[1][0]*v[0] + key_matrix[1][1]*v[1]) % 26
+        out.append(chr(c0 + ord('a')))
+        out.append(chr(c1 + ord('a')))
+    return ''.join(out)
+
+# Example with invertible matrix: [[3,3],[2,5]] has det=9 => invertible mod26
+if __name__ == "__main__":
+    km = [[3,3],[2,5]]
+    print(hill_encrypt("help", km))
